@@ -30,10 +30,18 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ClerkProvider>
-          <header>
+          <header className="flex items-center justify-end gap-3 px-6 py-4 border-b border-gray-200">
             <Show when="signed-out">
-              <SignInButton />
-              <SignUpButton />
+              <SignInButton mode="modal">
+                <button className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition-colors cursor-pointer">
+                  Sign in
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="px-4 py-2 text-sm font-medium rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors cursor-pointer">
+                  Sign up
+                </button>
+              </SignUpButton>
             </Show>
             <Show when="signed-in">
               <UserButton />
