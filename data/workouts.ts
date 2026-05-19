@@ -1,12 +1,10 @@
 import { db, workouts } from "../src/db";
 import { eq, and, gte, lt } from "drizzle-orm";
+import { startOfDay, addDays } from "date-fns";
 
 export async function getWorkoutsForDate(userId: string, date: Date) {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(date);
-  end.setHours(0, 0, 0, 0);
-  end.setDate(end.getDate() + 1);
+  const start = startOfDay(date);
+  const end = addDays(start, 1);
 
   return db.query.workouts.findMany({
     where: and(

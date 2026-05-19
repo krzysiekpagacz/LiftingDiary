@@ -30,7 +30,7 @@ export function DatePicker({ date }: { date: Date }) {
           selected={date}
           onSelect={(d) => {
             if (d) {
-              router.push(`/dashboard?date=${format(d, "yyyy-MM-dd")}`);
+              router.replace(`/dashboard?date=${format(d, "yyyy-MM-dd")}`);
               setOpen(false);
             }
           }}
