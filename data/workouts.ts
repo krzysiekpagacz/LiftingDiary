@@ -2,6 +2,17 @@ import { db, workouts } from "../src/db";
 import { eq, and, gte, lt } from "drizzle-orm";
 import { startOfDay, addDays } from "date-fns";
 
+export async function createWorkout(
+  userId: string,
+  data: { title?: string; date: Date; notes?: string },
+) {
+  const [workout] = await db
+    .insert(workouts)
+    .values({ userId, ...data })
+    .returning();
+  return workout;
+}
+
 export async function getWorkoutsForDate(userId: string, date: Date) {
   const start = startOfDay(date);
   const end = addDays(start, 1);
