@@ -2,6 +2,7 @@ import {
   pgTable, serial, text, integer, boolean,
   numeric, timestamp, index,
 } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
 
 export const exerciseCatalog = pgTable('exercise_catalog', {
   id: serial('id').primaryKey(),
@@ -44,3 +45,21 @@ export const sets = pgTable('sets', {
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const workoutsRelations = relations(workouts, ({ many }) => ({
+  workoutExercises: many(workoutExercises),
+}));
+
+export const workoutExercisesRelations = relations(workoutExercises, ({ one, many }) => ({
+  workout: one(workouts, { fields: [workoutExercises.workoutId], references: [workouts.id] }),
+  exercise: one(exerciseCatalog, { fields: [workoutExercises.exerciseId], references: [exerciseCatalog.id] }),
+  sets: many(sets),
+}));
+
+export const setsRelations = relations(sets, ({ one }) => ({
+  workoutExercise: one(workoutExercises, { fields: [sets.workoutExerciseId], references: [workoutExercises.id] }),
+}));
+
+export const exerciseCatalogRelations = relations(exerciseCatalog, ({ many }) => ({
+  workoutExercises: many(workoutExercises),
+}));

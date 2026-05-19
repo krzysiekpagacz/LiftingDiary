@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Before writing any code, always read the relevant file(s) in `docs/` first.** The docs directory contains binding standards that override general conventions. Currently:
 
 - `docs/ui.md` — UI component library rules, date formatting, and shadcn/ui configuration
+- `docs/data-fetching.md` — **data fetching rules (Server Components only, `/data` helpers, ownership)**
 
 ## Commands
 
@@ -31,6 +32,7 @@ npx drizzle-kit studio     # open Drizzle Studio GUI
 ## Code Generation Guidelines
 IMPORTANT: When generating any code, ALWAYS first refer to the relevant documentation files within the /docs directory to understand existing patterns, conventions, and best practices before implementation:
 - /docs/ui.md
+- /docs/data-fetching.md
 
 
 ### Auth — Clerk

@@ -1,42 +1,25 @@
-"use client";
-
-import { useState } from "react";
+import { auth } from "@clerk/nextjs/server";
 import { format } from "date-fns";
-import { CalendarIcon, Dumbbell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Dumbbell } from "lucide-react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getWorkoutsForDate } from "@/data/workouts";
+import { DatePicker } from "./_components/date-picker";
 
-const mockWorkouts = [
-  {
-    id: 1,
-    name: "Push Day",
-    exercises: [
-      { name: "Bench Press", sets: 4, reps: 8, weight: 80 },
-      { name: "Overhead Press", sets: 3, reps: 10, weight: 50 },
-      { name: "Tricep Pushdown", sets: 3, reps: 12, weight: 30 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Cardio",
-    exercises: [{ name: "Treadmill", sets: 1, reps: 1, weight: 0 }],
-  },
-];
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { userId } = await auth();
+  const { date: dateParam } = await searchParams;
 
-export default function DashboardPage() {
-  const [date, setDate] = useState<Date>(new Date());
-  const [open, setOpen] = useState(false);
+  const date = dateParam ? new Date(`${dateParam}T12:00:00`) : new Date();
+  const workoutList = await getWorkoutsForDate(userId!, date);
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -48,33 +31,14 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start gap-2 sm:w-auto">
-              <CalendarIcon className="size-4" />
-              {format(date, "do MMM yyyy")}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(d) => {
-                if (d) {
-                  setDate(d);
-                  setOpen(false);
-                }
-              }}
-            />
-          </PopoverContent>
-        </Popover>
+        <DatePicker date={date} />
 
         <div className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
             Workouts — {format(date, "do MMM yyyy")}
           </h2>
 
-          {mockWorkouts.length === 0 ? (
+          {workoutList.length === 0 ? (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                 <Dumbbell className="mb-3 size-8 text-muted-foreground" />
@@ -84,25 +48,38 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           ) : (
-            mockWorkouts.map((workout) => (
+            workoutList.map((workout) => (
               <Card key={workout.id}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">{workout.name}</CardTitle>
+                  <CardTitle className="text-base">
+                    {workout.title ?? "Untitled Workout"}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-1">
-                    {workout.exercises.map((exercise, i) => (
-                      <li
-                        key={i}
-                        className="flex items-center justify-between text-sm"
-                      >
-                        <span>{exercise.name}</span>
-                        <span className="text-muted-foreground">
-                          {exercise.sets} × {exercise.reps}
-                          {exercise.weight > 0 ? ` @ ${exercise.weight} kg` : ""}
-                        </span>
-                      </li>
-                    ))}
+                    {workout.workoutExercises.map((we) => {
+                      const workingSets = we.sets.filter((s) => !s.isWarmup);
+                      const maxWeight = workingSets.reduce(
+                        (max, s) =>
+                          s.weightKg && parseFloat(s.weightKg) > max
+                            ? parseFloat(s.weightKg)
+                            : max,
+                        0,
+                      );
+                      return (
+                        <li
+                          key={we.id}
+                          className="flex items-center justify-between text-sm"
+                        >
+                          <span>{we.exercise.name}</span>
+                          <span className="text-muted-foreground">
+                            {workingSets.length} set
+                            {workingSets.length !== 1 ? "s" : ""}
+                            {maxWeight > 0 ? ` @ ${maxWeight} kg` : ""}
+                          </span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </CardContent>
               </Card>
