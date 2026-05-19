@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `docs/ui.md` — UI component library rules, date formatting, and shadcn/ui configuration
 - `docs/data-fetching.md` — **data fetching rules (Server Components only, `/data` helpers, ownership)**
+- `docs/data-mutations.md` — **data mutation rules (Server Actions, `/data` helpers, Zod validation)**
+- `docs/auth.md` — **auth rules (Clerk only, `auth()` usage, route protection, no custom auth)**
 
 ## Commands
 
@@ -33,6 +35,8 @@ npx drizzle-kit studio     # open Drizzle Studio GUI
 IMPORTANT: When generating any code, ALWAYS first refer to the relevant documentation files within the /docs directory to understand existing patterns, conventions, and best practices before implementation:
 - /docs/ui.md
 - /docs/data-fetching.md
+- /docs/data-mutations.md
+- /docs/auth.md
 
 
 ### Auth — Clerk
