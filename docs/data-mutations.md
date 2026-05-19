@@ -78,6 +78,7 @@ All Server Actions must live in a file named `actions.ts` colocated with the rou
 | **User identity** | `userId` is always obtained from Clerk's `auth()` inside the action — never accepted as a parameter. |
 | **DB access** | Actions call `/data` helpers only — never `db` directly. |
 | **Return type** | Return a discriminated union `{ success: true; data?: ... } \| { success: false; error: string }` so callers can handle errors without throwing. |
+| **Redirects** | Do **not** call `redirect()` inside a Server Action. Return `{ success: true; redirectTo?: string }` and let the Client Component call `router.push()` after the action resolves. |
 
 ### Colocated file layout
 

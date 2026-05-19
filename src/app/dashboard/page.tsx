@@ -2,13 +2,15 @@ export const dynamic = 'force-dynamic';
 
 import { auth } from "@clerk/nextjs/server";
 import { format } from "date-fns";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Plus } from "lucide-react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { getWorkoutsForDate } from "@/data/workouts";
 import { DatePicker } from "./_components/date-picker";
 
@@ -33,7 +35,15 @@ export default async function DashboardPage({
           </p>
         </div>
 
-        <DatePicker date={date} />
+        <div className="flex items-center gap-3">
+          <DatePicker date={date} />
+          <Button asChild>
+            <Link href={`/dashboard/workout/new?date=${format(date, "yyyy-MM-dd")}`}>
+              <Plus className="size-4" />
+              Log New Workout
+            </Link>
+          </Button>
+        </div>
 
         <div className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
