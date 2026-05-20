@@ -31,6 +31,17 @@ npx drizzle-kit studio     # open Drizzle Studio GUI
 
 **Next.js 16 App Router** project with Clerk auth, Neon PostgreSQL, and Drizzle ORM.
 
+### Async params (Next.js 15+)
+
+`params` and `searchParams` props in page/layout components are **Promises** and must be awaited before accessing their properties:
+
+```ts
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  // ...
+}
+```
+
 ## Code Generation Guidelines
 IMPORTANT: When generating any code, ALWAYS first refer to the relevant documentation files within the /docs directory to understand existing patterns, conventions, and best practices before implementation:
 - /docs/ui.md

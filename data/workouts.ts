@@ -13,6 +13,25 @@ export async function createWorkout(
   return workout;
 }
 
+export async function getWorkoutById(workoutId: number, userId: string) {
+  return db.query.workouts.findFirst({
+    where: and(eq(workouts.id, workoutId), eq(workouts.userId, userId)),
+  });
+}
+
+export async function updateWorkout(
+  workoutId: number,
+  userId: string,
+  data: { title?: string; date: Date; notes?: string },
+) {
+  const [workout] = await db
+    .update(workouts)
+    .set({ ...data, updatedAt: new Date() })
+    .where(and(eq(workouts.id, workoutId), eq(workouts.userId, userId)))
+    .returning();
+  return workout;
+}
+
 export async function getWorkoutsForDate(userId: string, date: Date) {
   const start = startOfDay(date);
   const end = addDays(start, 1);
